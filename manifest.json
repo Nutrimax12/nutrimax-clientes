@@ -1,0 +1,13 @@
+{
+  "name": "Nutrimax Clientes",
+  "short_name": "Nutrimax",
+  "description": "Base de datos comercial de clientes de Alimentos Nutrimax",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f7f7f7",
+  "theme_color": "#c8102e",
+  "lang": "es-CO",
+  "icons": [
+    {"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
+  ]
+}

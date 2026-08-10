@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#c8102e">
+  <meta name="description" content="Base de datos de clientes de Alimentos Nutrimax">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <title>Nutrimax Clientes</title>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">N</div>
+      <div>
+        <div class="brand-name">NUTRIMAX</div>
+        <div class="brand-sub">Clientes</div>
+      </div>
+    </div>
+    <button id="installBtn" class="install-btn hidden">Instalar</button>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <div>
+        <h1>Mis clientes</h1>
+        <p>Administra fácilmente la información comercial de Nutrimax.</p>
+      </div>
+      <button id="newClientBtn" class="primary">+ Nuevo cliente</button>
+    </section>
+
+    <section class="stats">
+      <div class="stat-card"><span id="totalClients">0</span><small>Clientes registrados</small></div>
+      <div class="stat-card"><span id="cityCount">0</span><small>Ciudades</small></div>
+    </section>
+
+    <section class="toolbar">
+      <input id="searchInput" type="search" placeholder="Buscar negocio, encargado, teléfono, ciudad o barrio...">
+      <select id="cityFilter">
+        <option value="">Todas las ciudades</option>
+      </select>
+    </section>
+
+    <section id="emptyState" class="empty">
+      <div class="empty-icon">👥</div>
+      <h2>Aún no tienes clientes</h2>
+      <p>Agrega tu primer negocio para comenzar tu base de datos.</p>
+      <button class="primary" id="emptyNewBtn">Agregar cliente</button>
+    </section>
+
+    <section id="clientList" class="client-list"></section>
+  </main>
+
+  <div id="modal" class="modal hidden" aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h2 id="modalTitle">Nuevo cliente</h2>
+        <button id="closeModal" class="close">×</button>
+      </div>
+      <form id="clientForm">
+        <input type="hidden" id="clientId">
+        <label>Nombre del negocio *
+          <input id="businessName" required maxlength="100" autocomplete="organization">
+        </label>
+        <label>Encargado de compras *
+          <input id="buyerName" required maxlength="100" autocomplete="name">
+        </label>
+        <label>Teléfono *
+          <input id="phone" required maxlength="30" inputmode="tel" autocomplete="tel">
+        </label>
+        <label>Dirección *
+          <input id="address" required maxlength="150" autocomplete="street-address">
+        </label>
+        <div class="two-col">
+          <label>Ciudad *
+            <input id="city" required maxlength="80" autocomplete="address-level2">
+          </label>
+          <label>Zona / barrio
+            <input id="neighborhood" maxlength="80">
+          </label>
+        </div>
+        <div class="form-actions">
+          <button type="button" id="cancelBtn" class="secondary">Cancelar</button>
+          <button type="submit" class="primary">Guardar cliente</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>
