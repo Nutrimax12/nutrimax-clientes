@@ -1,4 +1,7 @@
+const SUPABASE_URL="https://fajnnxahxxtnmjvhyqej.supabase.co";
+const SUPABASE_KEY="sb_publishable_3upfkXAjSy2gYE6BqVaWhQ_tu_3lfcX";
 const KEY="nutrimax_clientes_v1";
+let clients=JSON.parse(localStorage.getItem(KEY)||"[]");
 let clients=JSON.parse(localStorage.getItem(KEY)||"[]");
 let deferredPrompt=null;
 const $=id=>document.getElementById(id);
