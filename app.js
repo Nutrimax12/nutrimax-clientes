@@ -9,7 +9,18 @@ const $=id=>document.getElementById(id);
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;$("installBtn").classList.remove("hidden")});
 $("installBtn").onclick=async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;$("installBtn").classList.add("hidden")};
 
-function save(){localStorage.setItem(KEY,JSON.stringify(clients));render()}
+async function save(){
+  const {error}=await sb.from("Clientes").upsert(clients.map(c=>({
+    nombre:c.buyerName,
+    teléfono:c.phone,
+    empresa:c.businessName,
+    ciudad:c.city,
+    dirección:c.address,
+    neighborhood:c.neighborhood
+  })));
+  if(error){console.error(error);toast("Error al guardar en Supabase");return}
+  render();
+}
 function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
 function render(){
   const q=$("searchInput").value.trim().toLowerCase(), city=$("cityFilter").value;
