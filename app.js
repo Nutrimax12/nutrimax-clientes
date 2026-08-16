@@ -103,17 +103,22 @@ async function deleteClient(id){
 
   if(!confirm(`¿Eliminar a ${c.businessName}?`)) return;
 
-  const {error}=await sb
+  const {data,error}=await sb
     .from("Clientes")
-    .delete()
-    .eq("client_id",id);
+  .delete()
+  .eq("client_id",id)
+  .select();
 
   if(error){
     console.error(error);
     toast("Error al eliminar en Supabase");
     return;
   }
-
+if(!data || data.length===0){
+  console.error("No se encontró el cliente para eliminar. client_id:",id);
+  toast("Supabase no encontró el cliente");
+  return;
+}
   clients=clients.filter(x=>x.id!==id);
   render();
   toast("Cliente eliminado");
