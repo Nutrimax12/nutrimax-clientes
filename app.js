@@ -18,7 +18,7 @@ const {error}=await sb.from("Clientes").upsert(clients.map(c=>({
   ciudad:c.city,
   address:c.address,
   neighborhood:c.neighborhood
-})),{onConflict:"client_id"});
+})), { onConflict: 'client_id', ignoreDuplicates: false });
   if(error){console.error(error);toast("Error al guardar en Supabase");return}
   render();
 }
