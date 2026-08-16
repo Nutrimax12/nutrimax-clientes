@@ -22,6 +22,31 @@ const {error}=await sb.from("Clientes").upsert(clients.map(c=>({
   if(error){console.error(error);toast("Error al guardar en Supabase");return}
   render();
 }
+async function loadClients(){
+  const {data,error}=await sb
+    .from("Clientes")
+    .select("client_id,buyerName,phone,businessName,ciudad,address,neighborhood")
+    .order("created_at",{ascending:false});
+
+  if(error){
+    console.error(error);
+    toast("Error al cargar clientes");
+    render();
+    return;
+  }
+
+  clients=(data||[]).map(c=>({
+    id:c.client_id,
+    buyerName:c.buyerName||"",
+    phone:c.phone||"",
+    businessName:c.businessName||"",
+    city:c.ciudad||"",
+    address:c.address||"",
+    neighborhood:c.neighborhood||""
+  }));
+
+  render();
+}
 function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
 function render(){
   const q=$("searchInput").value.trim().toLowerCase(), city=$("cityFilter").value;
@@ -77,4 +102,4 @@ function callClient(id){const c=clients.find(x=>x.id===id);if(c)window.location.
 function toast(t){const el=$("toast");el.textContent=t;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),2200)}
 $("searchInput").oninput=render;$("cityFilter").onchange=render;
 if("serviceWorker" in navigator) window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js"));
-render();
+loadClients();
