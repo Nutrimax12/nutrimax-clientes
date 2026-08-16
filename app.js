@@ -38,6 +38,15 @@ $("loginBtn").onclick=async()=>{
 
   await mostrarAppSiHaySesion();
 };
+$("logoutBtn").onclick=async()=>{
+  await sb.auth.signOut();
+  clients=[];
+  $("appHeader").style.display="none";
+  $("appMain").style.display="none";
+  $("loginScreen").style.display="block";
+  $("loginEmail").value="";
+  $("loginPassword").value="";
+};
 
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;$("installBtn").classList.remove("hidden")});
 $("installBtn").onclick=async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;$("installBtn").classList.add("hidden")};
