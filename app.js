@@ -10,14 +10,15 @@ window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPro
 $("installBtn").onclick=async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;$("installBtn").classList.add("hidden")};
 
 async function save(){
-  const {error}=await sb.from("Clientes").upsert(clients.map(c=>({
-    nombre:c.buyerName,
-    teléfono:c.phone,
-    empresa:c.businessName,
-    ciudad:c.city,
-    dirección:c.address,
-    neighborhood:c.neighborhood
-  })));
+const {error}=await sb.from("Clientes").upsert(clients.map(c=>({
+  client_id:c.id,
+  buyerName:c.buyerName,
+  phone:c.phone,
+  businessName:c.businessName,
+  ciudad:c.city,
+  address:c.address,
+  neighborhood:c.neighborhood
+})));
   if(error){console.error(error);toast("Error al guardar en Supabase");return}
   render();
 }
