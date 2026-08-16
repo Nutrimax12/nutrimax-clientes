@@ -97,7 +97,27 @@ $("clientForm").onsubmit=e=>{
  save();closeModal();toast(i>=0?"Cliente actualizado":"Cliente guardado");
 };
 function editClient(id){const c=clients.find(x=>x.id===id);if(c)openModal(c)}
-function deleteClient(id){const c=clients.find(x=>x.id===id);if(c&&confirm(`¿Eliminar a ${c.businessName}?`)){clients=clients.filter(x=>x.id!==id);save();toast("Cliente eliminado")}}
+async function deleteClient(id){
+  const c=clients.find(x=>x.id===id);
+  if(!c) return;
+
+  if(!confirm(`¿Eliminar a ${c.businessName}?`)) return;
+
+  const {error}=await sb
+    .from("Clientes")
+    .delete()
+    .eq("client_id",id);
+
+  if(error){
+    console.error(error);
+    toast("Error al eliminar en Supabase");
+    return;
+  }
+
+  clients=clients.filter(x=>x.id!==id);
+  render();
+  toast("Cliente eliminado");
+}
 function callClient(id){const c=clients.find(x=>x.id===id);if(c)window.location.href="tel:"+c.phone.replace(/[^\d+]/g,"")}
 function toast(t){const el=$("toast");el.textContent=t;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),2200)}
 $("searchInput").oninput=render;$("cityFilter").onchange=render;
