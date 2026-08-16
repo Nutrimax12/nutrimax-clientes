@@ -5,6 +5,39 @@ const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 let clients=[];
 let deferredPrompt=null;
 const $=id=>document.getElementById(id);
+async function mostrarAppSiHaySesion(){
+  const {data:{session}}=await sb.auth.getSession();
+
+  if(session){
+    $("loginScreen").style.display="none";
+    $("appHeader").style.display="";
+    $("appMain").style.display="";
+    await loadClients();
+  }else{
+    $("loginScreen").style.display="block";
+    $("appHeader").style.display="none";
+    $("appMain").style.display="none";
+  }
+}
+
+$("loginBtn").onclick=async()=>{
+  const email=$("loginEmail").value.trim();
+  const password=$("loginPassword").value;
+
+  $("loginError").textContent="";
+
+  const {error}=await sb.auth.signInWithPassword({
+    email:email,
+    password:password
+  });
+
+  if(error){
+    $("loginError").textContent="Correo o contraseña incorrectos";
+    return;
+  }
+
+  await mostrarAppSiHaySesion();
+};
 
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;$("installBtn").classList.remove("hidden")});
 $("installBtn").onclick=async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;$("installBtn").classList.add("hidden")};
@@ -127,4 +160,4 @@ function callClient(id){const c=clients.find(x=>x.id===id);if(c)window.location.
 function toast(t){const el=$("toast");el.textContent=t;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),2200)}
 $("searchInput").oninput=render;$("cityFilter").onchange=render;
 if("serviceWorker" in navigator) window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js"));
-loadClients();
+mostrarAppSiHaySesion();
