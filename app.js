@@ -59,6 +59,7 @@ const {error}=await sb.from("Clientes").upsert(clients.map(c=>({
   businessName:c.businessName,
   ciudad:c.city,
   address:c.address,
+  tipo_cliente:c.tipoCliente,
   neighborhood:c.neighborhood
 })), { onConflict: 'client_id', ignoreDuplicates: false });
   if(error){console.error(error);toast("Error al guardar en Supabase");return}
@@ -67,7 +68,7 @@ const {error}=await sb.from("Clientes").upsert(clients.map(c=>({
 async function loadClients(){
   const {data,error}=await sb
     .from("Clientes")
-    .select("client_id,buyerName,phone,businessName,ciudad,address,neighborhood")
+    .select("client_id,buyerName,phone,businessName,ciudad,address,neighborhood,tipo_cliente")
     .order("created_at",{ascending:false});
 
   if(error){
@@ -84,7 +85,7 @@ async function loadClients(){
     businessName:c.businessName||"",
     city:c.ciudad||"",
     address:c.address||"",
-    neighborhood:c.neighborhood||""
+    neighborhood:c.neighborhood||"",tipoCliente:c.tipo_cliente||"Cliente"
   }));
 
   render();
@@ -109,8 +110,10 @@ function card(c){
      <b>Teléfono:</b> ${esc(c.phone)}<br>
      <b>Dirección:</b> ${esc(c.address)}<br>
      <b>Ubicación:</b> ${esc(c.city)}${c.neighborhood?" · "+esc(c.neighborhood):""}
+     <br><b>Tipo:</b> ${esc(c.tipoCliente||"Cliente")}
    </div>
    <div class="client-actions">
+   <button class="action call" onclick="whatsappClient('${c.id}')">💬 WhatsApp</button>
      <button class="action call" onclick="callClient('${c.id}')">☎ Llamar</button>
      <button class="action edit" onclick="editClient('${c.id}')">✎ Editar</button>
      <button class="action delete" onclick="deleteClient('${c.id}')">Eliminar</button>
@@ -126,6 +129,7 @@ function openModal(c=null){
  $("address").value=c?.address||"";
  $("city").value=c?.city||"";
  $("neighborhood").value=c?.neighborhood||"";
+  $("tipoCliente").value=c?.tipoCliente||"Cliente";
  $("modal").classList.remove("hidden");$("modal").setAttribute("aria-hidden","false");$("businessName").focus()
 }
 function closeModal(){$("modal").classList.add("hidden");$("modal").setAttribute("aria-hidden","true")}
@@ -134,7 +138,7 @@ $("modal").addEventListener("click",e=>{if(e.target===$("modal"))closeModal()});
 $("clientForm").onsubmit=e=>{
  e.preventDefault();
  const id=$("clientId").value||crypto.randomUUID();
- const data={id,businessName:$("businessName").value.trim(),buyerName:$("buyerName").value.trim(),phone:$("phone").value.trim(),address:$("address").value.trim(),city:$("city").value.trim(),neighborhood:$("neighborhood").value.trim()};
+ const data={id,businessName:$("businessName").value.trim(),buyerName:$("buyerName").value.trim(),phone:$("phone").value.trim(),address:$("address").value.trim(),city:$("city").value.trim(),neighborhood:$("neighborhood").value.trim() ,tipoCliente:$("tipoCliente").value};
  const i=clients.findIndex(c=>c.id===id); if(i>=0) clients[i]=data; else clients.unshift(data);
  save();closeModal();toast(i>=0?"Cliente actualizado":"Cliente guardado");
 };
@@ -166,6 +170,18 @@ if(!data || data.length===0){
   toast("Cliente eliminado");
 }
 function callClient(id){const c=clients.find(x=>x.id===id);if(c)window.location.href="tel:"+c.phone.replace(/[^\d+]/g,"")}
+function whatsappClient(id){
+  const c=clients.find(x=>x.id===id);
+  if(!c) return;
+
+  let phone=(c.phone||"").replace(/\D/g,"");
+
+  if(phone.length===10){
+    phone="57"+phone;
+  }
+
+  window.open("https://wa.me/"+phone,"_blank");
+}
 function toast(t){const el=$("toast");el.textContent=t;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),2200)}
 $("searchInput").oninput=render;$("cityFilter").onchange=render;
 if("serviceWorker" in navigator) window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js"));
